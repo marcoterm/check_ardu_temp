@@ -26,19 +26,19 @@ myvalue=$(w3m $2 | grep $4 | cut -f2 -d" " | grep .)
 
 if [ 1 -eq "$(echo "${myvalue} > ${8}" | bc)" ]
 then
-	echo "CRITICAL! Temperature $myvalue exceed range!"
+	echo "CRITICAL! Unit $myvalue letter $4 exceed range!"
 	exit 2
 fi
 
 if [ 1 -eq "$(echo "${myvalue} > ${6}" | bc)" ]
 then
-	echo "WARNING! Temperature $myvalue exceed range!"
+	echo "WARNING! Unit $myvalue letter $4 exceed range!"
 	exit 1
 fi
 
 if [[ "$myvalue" =~ ^[0-9]+(\.[0-9]+)?$ ]]
 then
-echo "OK: temperature $myvalue in range!"
+echo "OK: Unit $myvalue letter $4 in range!"
 else
 echo "UNKNOWN: Host unreachable"
 exit 3

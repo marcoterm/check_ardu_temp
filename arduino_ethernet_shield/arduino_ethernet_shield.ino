@@ -25,13 +25,13 @@ byte mac[] = {
 };
 
 // DNS
-IPAddress dnServer(192, 168, 1, 100);
+IPAddress dnServer(192, 168, 15, 210);
 // GW
-IPAddress gateway(192, 168, 10, 230);
+IPAddress gateway(192, 168, 15, 253);
 // NM
-IPAddress subnet(255, 255, 0, 0);
+IPAddress subnet(255, 255, 255, 0);
 // IP
-IPAddress ip(192, 168, 1, 191);
+IPAddress ip(192, 168, 15, 190);
 
 // Initialize the Ethernet server library
 // with the IP address and port you want to use
@@ -53,7 +53,12 @@ void setup() {
 
 void loop() {
   sensors.requestTemperatures();
+  Serial.print("Dallas temp: ");
   Serial.println(sensors.getTempCByIndex(0));
+  Serial.print("DHT22 Temp: ");
+  Serial.println(dht.readTemperature());
+  Serial.print("DHT22 hum: ");
+  Serial.println(dht.readHumidity());
   delay(1000);
   // listen for incoming clients
   EthernetClient client = server.available();
@@ -74,12 +79,12 @@ void loop() {
           client.println();
           client.println("<!DOCTYPE HTML>");
           client.println("<html><head><title>ArduSensor Temperatura e umidita'</title></head><body>");
-          client.print("<p>Temperatura(A): ");
+          client.print("<p>TemperaturaA: ");
           client.println(sensors.getTempCByIndex(0));
-          client.print("<p>Temperatura(B): ");
+          client.print("<p>TemperaturaB: ");
           client.print(dht.readTemperature());
-          client.print("<p>Umidita': ");
-          client.print(dht.readTemperature());
+          client.print("<p>UmiditaC: ");
+          client.print(dht.readHumidity());
           client.println("</p><br /></body></html>");
           break;
         }
