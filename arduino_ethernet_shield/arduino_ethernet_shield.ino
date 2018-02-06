@@ -1,6 +1,9 @@
+#include <Wire.h>
+
+#include <DHT.h>
+
 #include <SPI.h>
 #include <Ethernet.h>
-#include <OneWire.h>
 #include <DallasTemperature.h>
 
 // Data wire is plugged into pin 2 on the Arduino
@@ -12,12 +15,13 @@ OneWire oneWire(ONE_WIRE_BUS);
 // Pass our oneWire reference to Dallas Temperature.
 DallasTemperature sensors(&oneWire);
 
+DHT dht(7, DHT22);
 
 
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network:
 byte mac[] = {
-  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xAD
 };
 
 // DNS
@@ -27,7 +31,7 @@ IPAddress gateway(192, 168, 10, 230);
 // NM
 IPAddress subnet(255, 255, 0, 0);
 // IP
-IPAddress ip(192, 168, 1, 190);
+IPAddress ip(192, 168, 1, 191);
 
 // Initialize the Ethernet server library
 // with the IP address and port you want to use
@@ -48,9 +52,9 @@ void setup() {
 
 
 void loop() {
-    sensors.requestTemperatures();
-    Serial.println(sensors.getTempCByIndex(0));
-    delay(1000);
+  sensors.requestTemperatures();
+  Serial.println(sensors.getTempCByIndex(0));
+  delay(1000);
   // listen for incoming clients
   EthernetClient client = server.available();
   if (client) {
@@ -65,14 +69,18 @@ void loop() {
           // send a standard http response header
           client.println("HTTP/1.1 200 OK");
           client.println("Content-Type: text/html");
-          client.println("Connection: close"); 
+          client.println("Connection: close");
           client.println("Refresh: 5");
           client.println();
           client.println("<!DOCTYPE HTML>");
-            client.println("<html><head><title>ArduSensorTemp</title></head><body>");
-            client.print("<p>TemperaturaA: ");
-            client.println(sensors.getTempCByIndex(0));
-            client.println("</p><br /></body></html>");
+          client.println("<html><head><title>ArduSensor Temperatura e umidita'</title></head><body>");
+          client.print("<p>Temperatura(A): ");
+          client.println(sensors.getTempCByIndex(0));
+          client.print("<p>Temperatura(B): ");
+          client.print(dht.readTemperature());
+          client.print("<p>Umidita': ");
+          client.print(dht.readTemperature());
+          client.println("</p><br /></body></html>");
           break;
         }
         if (c == '\n') {
