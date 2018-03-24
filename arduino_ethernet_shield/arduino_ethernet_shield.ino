@@ -17,6 +17,7 @@ DallasTemperature sensors(&oneWire);
 
 DHT dht(7, DHT22);
 
+int watersensor   = 0; // Pin analogico a cui è collegato il watersensor
 
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network:
@@ -52,6 +53,7 @@ void setup() {
 
 
 void loop() {
+  int lettura = analogRead(watersensor);
   sensors.requestTemperatures();
   Serial.print("Dallas temp: ");
   Serial.println(sensors.getTempCByIndex(0));
@@ -59,6 +61,8 @@ void loop() {
   Serial.println(dht.readTemperature());
   Serial.print("DHT22 hum: ");
   Serial.println(dht.readHumidity());
+  Serial.print("Water height: ");
+  Serial.println(lettura);
   delay(1000);
   // listen for incoming clients
   EthernetClient client = server.available();
@@ -85,6 +89,8 @@ void loop() {
           client.print(dht.readTemperature());
           client.print("<p>UmiditaC: ");
           client.print(dht.readHumidity());
+          client.print("<p>WaterheightD: ");
+          client.print(lettura);
           client.println("</p><br /></body></html>");
           break;
         }
